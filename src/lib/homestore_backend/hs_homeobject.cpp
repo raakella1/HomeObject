@@ -286,6 +286,17 @@ HSHomeObject::~HSHomeObject() {
     }
     trigger_timed_events();
 #endif
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution< std::mt19937::result_type > dist6(1, 100000); // distribution in range [1, 6]
+
+    LOGTRACEMOD(blobmgr, "Dumping index table to file {}", dump_fle);
+    for (auto const& [pg_id, pg] : _pg_map) {
+        index_table = static_cast< HS_PG* >(pg.get())->index_table_;
+        auto dump_file = fmt::format("tree_during_shutdown_{}.txt", dist6(rng));
+        LOGI("Dumping index table for pg_id: {}, dump_file: {}", pg_id, dump_file);
+        index_table->dump_tree_to_file(dump_file);
+    }
     homestore::HomeStore::instance()->shutdown();
     homestore::HomeStore::reset_instance();
     iomanager.stop();

@@ -2,6 +2,7 @@
 #include <boost/uuid/random_generator.hpp>
 #include "hs_homeobject.hpp"
 #include "index_kv.hpp"
+#include <random>
 
 SISL_LOGGING_DECL(blobmgr)
 
@@ -37,6 +38,12 @@ HSHomeObject::recover_index_table(homestore::superblk< homestore::index_table_sb
     index_table_pg_map_.emplace(uuid_str, PgIndexTable{0, index_table});
 
     LOGTRACEMOD(blobmgr, "Recovered index table uuid {}", uuid_str);
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution< std::mt19937::result_type > dist6(1, 100000); // distribution in range [1, 6]
+    auto dump_file = fmt::format("tree_after_recovery_{}.txt", dist6(rng));
+    LOGTRACEMOD(blobmgr, "Dumping index table to file {}", dump_fle);
+    index_table->dump_tree_to_file(dump_file);
     return index_table;
 }
 
