@@ -42,7 +42,7 @@ HSHomeObject::recover_index_table(homestore::superblk< homestore::index_table_sb
     std::mt19937 rng(dev());
     std::uniform_int_distribution< std::mt19937::result_type > dist6(1, 100000); // distribution in range [1, 6]
     auto dump_file = fmt::format("tree_after_recovery_{}.txt", dist6(rng));
-    LOGTRACEMOD(blobmgr, "Dumping index table to file {}", dump_fle);
+    LOGTRACEMOD(blobmgr, "Dumping index table to file {}", dump_file);
     index_table->dump_tree_to_file(dump_file);
     return index_table;
 }
